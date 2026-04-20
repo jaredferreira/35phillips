@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>35 Phillips — Project Hub</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23c9470a'/><text x='16' y='22' font-family='IBM Plex Mono, ui-monospace, monospace' font-size='16' font-weight='700' fill='%23f5f2ec' text-anchor='middle'>35</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  html, body, #root { margin: 0; padding: 0; height: 100%; background: #efebe2; }
+  body { font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #1a1a1a; }
+  * { box-sizing: border-box; }
+  button { font-family: inherit; }
+  ::selection { background: #c9470a; color: #f5f2ec; }
+  /* scrollbars */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(26,26,26,0.15); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(26,26,26,0.3); }
+  /* Narrow viewport: stack right sidebar below main column */
+  @media (max-width: 1200px) {
+    .phase-detail-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  }
+  /* Mobile <=900px: tighten padding, stack grids */
+  @media (max-width: 900px) {
+    .phase-detail-grid { padding: 20px 16px 32px !important; gap: 20px !important; }
+    .phase-date-strip  { padding: 14px 16px 0 !important; }
+    .phase-header      { padding: 16px 16px 18px !important; }
+    .phase-title       { font-size: 30px !important; }
+    .overview-root     { padding: 20px 16px 32px !important; }
+    .overview-title    { font-size: 28px !important; }
+    .overview-hero     { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+    .stats-grid        { grid-template-columns: repeat(2, 1fr) !important; }
+    .stats-grid > div  { border-right: none !important; border-bottom: 1px solid rgba(26,26,26,0.12) !important; }
+    .stats-grid > div:nth-child(odd)  { border-right: 1px solid rgba(26,26,26,0.12) !important; }
+    .stats-grid > div:nth-last-child(-n+2) { border-bottom: none !important; }
+    .schedule-root     { padding: 20px 16px !important; }
+    .project-summary   { padding: 20px 16px !important; }
+    .schedule-row      { grid-template-columns: 110px 1fr 46px !important; gap: 10px !important; }
+    .schedule-axis     { grid-template-columns: 110px 1fr 46px !important; gap: 10px !important; }
+    .schedule-row .phase-name { font-size: 12px !important; }
+    .activity-row      { grid-template-columns: 1fr !important; gap: 4px !important; padding: 12px 16px !important; }
+    .activity-row .activity-when { font-size: 10px !important; }
+    .tweaks-panel      { right: 10px !important; left: 10px !important; bottom: 10px !important; width: auto !important; }
+    /* Renders: 2x2 with consistent aspect ratio on mobile */
+    .renders-overview-grid {
+      grid-template-columns: 1fr 1fr !important;
+      grid-template-rows: auto !important;
+      gap: 10px !important;
+    }
+    .renders-overview-grid > button {
+      grid-row: auto !important;
+      grid-column: auto !important;
+      aspect-ratio: 4 / 3 !important;
+    }
+    .renders-full-grid {
+      gap: 10px !important;
+    }
+    .renders-full-grid > button {
+      aspect-ratio: 4 / 3 !important;
+    }
+    /* Lightbox: tighter on mobile */
+    .render-lightbox { padding: 20px 16px !important; }
+    .render-lightbox .rl-header { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="atoms.jsx"></script>
+<script type="text/babel" src="edits.jsx"></script>
+<script type="text/babel" src="milestones.jsx"></script>
+<script type="text/babel" src="rail.jsx"></script>
+<script type="text/babel" src="floorplan.jsx"></script>
+<script type="text/babel" src="renders.jsx"></script>
+<script type="text/babel" src="plans.jsx"></script>
+<script type="text/babel" src="detail.jsx"></script>
+<script type="text/babel" src="shell.jsx"></script>
+<script type="text/babel" src="mobile.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "progress": 0.32,
+  "view": "overview",
+  "personaId": "owner",
+  "accent": "#c9470a"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [progress, setProgress] = useState(TWEAK_DEFAULTS.progress);
+  const [view, setView] = useState(TWEAK_DEFAULTS.view);
+  const [accent, setAccent] = useState(TWEAK_DEFAULTS.accent);
+  const [persona, setPersona] = useState(
+    PERSONAS.find(p => p.id === TWEAK_DEFAULTS.personaId) || PERSONAS[0]
+  );
+  const [selectedId, setSelectedId] = useState(() => {
+    // Pick current in-progress phase
+    for (let i = 0; i < PHASES.length; i++) {
+      const s = statusFromProgress(i, PHASES.length, TWEAK_DEFAULTS.progress);
+      if (s === "in-progress") return PHASES[i].id;
+    }
+    return PHASES[0].id;
+  });
+  const [tweaksOpen, setTweaksOpen] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useIsMobile(900);
+  const [edits, setEdits] = useState(() => loadEdits());
+  const [editMode, setEditMode] = useState(() => sessionStorage.getItem("35phillips:gc") === "1");
+  const [pinOpen, setPinOpen] = useState(false);
+  const PHASES_MERGED = useMemo(() => applyEditsAll(PHASES, edits), [edits]);
+  const patchPhase = (id, patch) => {
+    setEdits(prev => {
+      const next = { ...prev, [id]: { ...(prev[id] || {}), ...patch } };
+      saveEdits(next);
+      return next;
+    });
+  };
+  const exitEdit = () => {
+    sessionStorage.removeItem("35phillips:gc");
+    setEditMode(false);
+  };
+
+  // Restore last position
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("35phillips") || "{}");
+      if (saved.view) setView(saved.view);
+      if (saved.selectedId) setSelectedId(saved.selectedId);
+      if (typeof saved.progress === "number") setProgress(saved.progress);
+      if (saved.personaId) {
+        const p = PERSONAS.find(x => x.id === saved.personaId);
+        if (p) setPersona(p);
+      }
+    } catch {}
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("35phillips", JSON.stringify({
+      view, selectedId, progress, personaId: persona.id,
+    }));
+  }, [view, selectedId, progress, persona]);
+
+  // When persona changes to a contractor, jump to their phase
+  useEffect(() => {
+    if (persona.phase) {
+      setSelectedId(persona.phase);
+      setView("phase");
+    }
+  }, [persona.id]);
+
+  // Edit mode protocol
+  useEffect(() => {
+    const handler = (e) => {
+      if (!e.data || typeof e.data !== "object") return;
+      if (e.data.type === "__activate_edit_mode") setTweaksOpen(true);
+      if (e.data.type === "__deactivate_edit_mode") setTweaksOpen(false);
+    };
+    window.addEventListener("message", handler);
+    window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
+  const selectedIdx = PHASES_MERGED.findIndex(p => p.id === selectedId);
+  const selectedPhase = PHASES_MERGED[selectedIdx] || PHASES_MERGED[0];
+
+  const tweakState = { progress, view, persona, accent };
+  const setTweakState = (s) => {
+    setProgress(s.progress);
+    setView(s.view);
+    setPersona(s.persona);
+    setAccent(s.accent);
+    window.parent.postMessage({
+      type: "__edit_mode_set_keys",
+      edits: {
+        progress: s.progress, view: s.view,
+        personaId: s.persona.id, accent: s.accent,
+      },
+    }, "*");
+  };
+
+  return (
+    <div style={{
+      display: "flex", flexDirection: "column", height: "100vh", minHeight: 0,
+      "--accent": accent,
+    }}>
+      {isMobile ? (
+        <MobileTopBar
+          onMenu={() => setDrawerOpen(true)}
+          view={view}
+          selectedPhase={view === "phase" ? selectedPhase : null}
+          editMode={editMode}
+        />
+      ) : (
+        <TopBar
+          persona={persona} onPersonaChange={setPersona} personas={PERSONAS}
+          view={view} onViewChange={setView}
+          editMode={editMode}
+          onSignIn={() => setPinOpen(true)}
+          onExitEdit={exitEdit}
+        />
+      )}
+      <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
+        {view === "phase" && !isMobile && (
+          <PhaseRail
+            phases={PHASES_MERGED}
+            selectedId={selectedId}
+            onSelect={(id) => setSelectedId(id)}
+            progress={progress}
+            personaPhase={persona.phase}
+          />
+        )}
+        {view === "phase" && (
+          <PhaseDetail
+            phase={selectedPhase}
+            phaseIndex={selectedIdx}
+            totalPhases={PHASES_MERGED.length}
+            progress={progress}
+            activity={ACTIVITY}
+            phases={PHASES_MERGED}
+            persona={persona}
+            editMode={editMode}
+            onPatch={(patch) => patchPhase(selectedPhase.id, patch)}
+          />
+        )}
+        {view === "overview" && (
+          <OverviewView
+            phases={PHASES_MERGED}
+            progress={progress}
+            onSelect={(id) => { setSelectedId(id); setView("phase"); }}
+            persona={persona}
+            activity={ACTIVITY}
+            onOpenRender={(i) => setLightboxIdx(i)}
+          />
+        )}
+        {view === "schedule" && (
+          <ScheduleView
+            phases={PHASES_MERGED}
+            progress={progress}
+            onSelect={(id) => { setSelectedId(id); setView("phase"); }}
+          />
+        )}
+        {view === "renders" && (
+          <RendersView onClose={(i) => setLightboxIdx(i)} />
+        )}
+        {view === "plans" && (
+          <PlansView />
+        )}
+      </div>
+
+      <RenderLightbox
+        index={lightboxIdx}
+        onClose={() => setLightboxIdx(null)}
+        onPrev={() => setLightboxIdx((i) => (i - 1 + RENDERS.length) % RENDERS.length)}
+        onNext={() => setLightboxIdx((i) => (i + 1) % RENDERS.length)}
+      />
+
+      <TweaksPanel
+        active={tweaksOpen}
+        onClose={() => setTweaksOpen(false)}
+        state={tweakState}
+        setState={setTweakState}
+        personas={PERSONAS}
+      />
+
+      <PinModal
+        open={pinOpen}
+        onClose={() => setPinOpen(false)}
+        onSuccess={() => { setPinOpen(false); setEditMode(true); }}
+      />
+
+      <MobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        view={view} onViewChange={setView}
+        persona={persona} onPersonaChange={setPersona} personas={PERSONAS}
+        editMode={editMode}
+        onSignIn={() => setPinOpen(true)}
+        onExitEdit={exitEdit}
+        phases={PHASES_MERGED}
+        selectedId={selectedId}
+        onSelectPhase={(id) => { setSelectedId(id); setView("phase"); }}
+        progress={progress}
+      />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
