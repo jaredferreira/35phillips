@@ -78,7 +78,9 @@ function TopBar({ persona, onPersonaChange, personas, view, onViewChange, editMo
 function ScheduleView({ phases, progress, onSelect }) {
   const total = phases.reduce((s, p) => s + p.duration, 0);
   let cum = 0;
-  const playheadDays = progress * total;
+  const allMs = phases.flatMap(p => p.milestones || []);
+  const doneFrac = allMs.length > 0 ? allMs.filter(m => m.done).length / allMs.length : 0;
+  const playheadDays = doneFrac * total;
 
   return (
     <div className="schedule-root" style={{
@@ -113,7 +115,7 @@ function ScheduleView({ phases, progress, onSelect }) {
           cum += p.duration;
           const end = cum;
           const pct = (d) => (d / total) * 100;
-          const status = statusFromProgress(i, phases.length, progress);
+          const status = statusFromMilestones(p);
           const colors = {
             complete: "#2d4a3e",
             "in-progress": "#c9470a",
@@ -196,27 +198,27 @@ function OverviewView({ phases, progress, onSelect, persona, activity, onOpenRen
   // Hero: current in-progress phase + next up
   let current = null, next = null;
   for (let i = 0; i < phases.length; i++) {
-    const s = statusFromProgress(i, phases.length, progress);
+    const s = statusFromMilestones(phases[i]);
     if (s === "in-progress" && !current) current = { p: phases[i], i };
     else if ((s === "scheduled" || s === "bidding") && current && !next) next = { p: phases[i], i };
   }
   if (!current) {
     // Pick first non-complete as "up next"
     for (let i = 0; i < phases.length; i++) {
-      if (statusFromProgress(i, phases.length, progress) !== "complete") {
+      if (statusFromMilestones(phases[i]) !== "complete") {
         current = { p: phases[i], i }; break;
       }
     }
   }
   if (!next && current) {
     for (let i = current.i + 1; i < phases.length; i++) {
-      const s = statusFromProgress(i, phases.length, progress);
+      const s = statusFromMilestones(phases[i]);
       if (s !== "complete") { next = { p: phases[i], i }; break; }
     }
   }
 
-  const completeCount = phases.filter((_, i) =>
-    statusFromProgress(i, phases.length, progress) === "complete"
+  const completeCount = phases.filter(p =>
+    statusFromMilestones(p) === "complete"
   ).length;
 
   return (

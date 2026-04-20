@@ -11,27 +11,36 @@ function PhaseRail({ phases, selectedId, onSelect, progress, personaPhase }) {
     }}>
       <div style={{ padding: "22px 24px 18px", borderBottom: "1px solid rgba(26,26,26,0.12)" }}>
         <Label>Project Phases</Label>
-        <div style={{
-          marginTop: 8, fontFamily: "'IBM Plex Mono', monospace",
-          fontSize: 11, color: "#1a1a1a",
-          display: "flex", justifyContent: "space-between",
-        }}>
-          <span>{phases.length} phases</span>
-          <span>{Math.round(progress * 100)}% overall</span>
-        </div>
-        <div style={{
-          marginTop: 8, height: 3, background: "#d9d3c3", position: "relative",
-        }}>
-          <div style={{
-            position: "absolute", left: 0, top: 0, height: "100%",
-            width: `${progress * 100}%`, background: "#c9470a",
-          }} />
-        </div>
+        {(() => {
+          const all = phases.flatMap(p => p.milestones || []);
+          const done = all.filter(m => m.done).length;
+          const milestoneProgress = all.length > 0 ? done / all.length : 0;
+          return (
+            <>
+              <div style={{
+                marginTop: 8, fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: 11, color: "#1a1a1a",
+                display: "flex", justifyContent: "space-between",
+              }}>
+                <span>{phases.length} phases</span>
+                <span>{Math.round(milestoneProgress * 100)}% overall</span>
+              </div>
+              <div style={{
+                marginTop: 8, height: 3, background: "#d9d3c3", position: "relative",
+              }}>
+                <div style={{
+                  position: "absolute", left: 0, top: 0, height: "100%",
+                  width: `${milestoneProgress * 100}%`, background: "#c9470a",
+                }} />
+              </div>
+            </>
+          );
+        })()}
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
         {phases.map((p, i) => {
-          const status = statusFromProgress(i, phases.length, progress);
+          const status = statusFromMilestones(p);
           const selected = p.id === selectedId;
           const isPersona = personaPhase === p.id;
           return (

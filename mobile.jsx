@@ -92,10 +92,10 @@ function MobileDrawer({
             color: "#8a8579", letterSpacing: "0.14em",
           }}>
             <span>PHASES</span>
-            <span>{Math.round(progress * 100)}%</span>
+            <span>{(() => { const all = phases.flatMap(p => p.milestones || []); const done = all.filter(m => m.done).length; return all.length > 0 ? Math.round(done / all.length * 100) : 0; })()}%</span>
           </div>
           {phases.map((p, i) => {
-            const status = statusFromProgress(i, phases.length, progress);
+            const status = statusFromMilestones(p);
             const selected = p.id === selectedId && view === "phase";
             return (
               <button key={p.id}

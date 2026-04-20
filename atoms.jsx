@@ -98,7 +98,16 @@ function milestonesForStatus(baseMilestones, status, progress, phaseIndex, total
   return baseMilestones.map((m, i) => ({ ...m, done: i < n }));
 }
 
+function statusFromMilestones(phase) {
+  const ms = phase.milestones || [];
+  if (ms.length === 0) return "queued";
+  const done = ms.filter(m => m.done).length;
+  if (done === ms.length) return "complete";
+  if (done > 0) return "in-progress";
+  return "scheduled";
+}
+
 Object.assign(window, {
   StatusDot, StatusPill, Hairline, Label,
-  statusFromProgress, milestonesForStatus,
+  statusFromProgress, milestonesForStatus, statusFromMilestones,
 });

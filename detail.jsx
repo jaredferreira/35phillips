@@ -104,7 +104,7 @@ function PhaseChecklistTabs({ phase, status, editMode, onPatch, done, total }) {
 // Phase detail — main content pane (with GC edit mode)
 
 function PhaseDetail({ phase, phaseIndex, totalPhases, progress, activity, phases, persona, editMode, onPatch }) {
-  const status = statusFromProgress(phaseIndex, totalPhases, progress);
+  const status = statusFromMilestones(phase);
   const storedMilestones = phase.milestones || [];
   const done = storedMilestones.filter(m => m.done).length;
   const total = storedMilestones.length;
