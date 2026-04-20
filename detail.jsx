@@ -105,9 +105,9 @@ function PhaseChecklistTabs({ phase, status, editMode, onPatch, done, total }) {
 
 function PhaseDetail({ phase, phaseIndex, totalPhases, progress, activity, phases, persona, editMode, onPatch }) {
   const status = statusFromProgress(phaseIndex, totalPhases, progress);
-  const milestones = milestonesForStatus(phase.milestones, status, progress, phaseIndex, totalPhases);
-  const done = milestones.filter(m => m.done).length;
-  const total = milestones.length;
+  const storedMilestones = phase.milestones || [];
+  const done = storedMilestones.filter(m => m.done).length;
+  const total = storedMilestones.length;
 
   // Date math — fake but consistent
   const startDay = phases.slice(0, phaseIndex).reduce((s, p) => s + p.duration, 0);

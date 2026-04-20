@@ -62,14 +62,13 @@ function MilestoneRow({
             }}>⋮⋮</div>
         )}
         <button
-          onClick={editMode ? onToggleDone : undefined}
-          disabled={!editMode}
+          onClick={onToggleDone}
           style={{
             width: 18, height: 18, padding: 0,
             border: `1.5px solid ${m.done ? "#2d4a3e" : "#b8b2a3"}`,
             background: m.done ? "#2d4a3e" : "transparent",
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: editMode ? "pointer" : "default",
+            cursor: "pointer",
           }}>
           {m.done && (
             <svg width="11" height="11" viewBox="0 0 11 11">
