@@ -32,7 +32,7 @@ function MobileDrawer({
     <div onClick={onClose} style={{
       position: "fixed", inset: 0, zIndex: 2500,
       background: "rgba(15,15,15,0.55)",
-      display: "flex",
+      display: "flex", justifyContent: "flex-end",
     }}>
       <div onClick={e => e.stopPropagation()} style={{
         width: "min(88vw, 360px)", height: "100%",
@@ -165,21 +165,10 @@ function MobileTopBar({ onMenu, view, selectedPhase, editMode }) {
     <div style={{
       height: 56, background: "#1a1a1a", color: "#f5f2ec",
       display: "flex", alignItems: "center", gap: 14,
-      padding: "0 10px 0 6px", flexShrink: 0,
+      padding: "0 6px 0 14px", flexShrink: 0,
       borderBottom: editMode ? "2px solid #c9470a" : "1px solid #000",
       fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
     }}>
-      <button onClick={onMenu} aria-label="Menu" style={{
-        width: 44, height: 44, background: "transparent", border: "none",
-        color: "#f5f2ec", cursor: "pointer", padding: 0,
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>
-        <svg width="22" height="22" viewBox="0 0 22 22">
-          <rect x="3" y="5"  width="16" height="2" fill="currentColor"/>
-          <rect x="3" y="10" width="16" height="2" fill="currentColor"/>
-          <rect x="3" y="15" width="16" height="2" fill="currentColor"/>
-        </svg>
-      </button>
       <div style={{
         width: 24, height: 24, background: "#c9470a",
         display: "flex", alignItems: "center", justifyContent: "center",
@@ -197,6 +186,17 @@ function MobileTopBar({ onMenu, view, selectedPhase, editMode }) {
           letterSpacing: "0.14em",
         }}>EDIT</div>
       )}
+      <button onClick={onMenu} aria-label="Menu" style={{
+        width: 44, height: 44, background: "transparent", border: "none",
+        color: "#f5f2ec", cursor: "pointer", padding: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <svg width="22" height="22" viewBox="0 0 22 22">
+          <rect x="3" y="5"  width="16" height="2" fill="currentColor"/>
+          <rect x="3" y="10" width="16" height="2" fill="currentColor"/>
+          <rect x="3" y="15" width="16" height="2" fill="currentColor"/>
+        </svg>
+      </button>
     </div>
   );
 }
