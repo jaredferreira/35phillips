@@ -68,14 +68,18 @@
     .renders-overview-grid > button {
       grid-row: auto !important;
       grid-column: auto !important;
-      aspect-ratio: 4 / 3 !important;
+      aspect-ratio: 1 / 1 !important;
     }
     .renders-full-grid {
       gap: 10px !important;
     }
     .renders-full-grid > button {
-      aspect-ratio: 4 / 3 !important;
+      aspect-ratio: 1 / 1 !important;
     }
+    /* Hide text overlays on render images on mobile */
+    .render-overlay { display: none !important; }
+    /* Tighter gutters on renders page */
+    .renders-page { padding: 16px 10px 24px !important; }
     /* Lightbox: tighter on mobile */
     .render-lightbox { padding: 20px 16px !important; }
     .render-lightbox .rl-header { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }

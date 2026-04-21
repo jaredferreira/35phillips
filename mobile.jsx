@@ -182,10 +182,13 @@ function MobileTopBar({ onMenu, view, selectedPhase, editMode }) {
       fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
     }}>
       <div style={{
-        width: 24, height: 24, background: "#c9470a",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600,
-      }}>35</div>
+        width: 36, height: 36, background: "#c9470a",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1,
+      }}>
+        <div style={{ fontSize: 15, fontWeight: 700 }}>35</div>
+        <div style={{ fontSize: 7, letterSpacing: "0.12em", marginTop: 1, opacity: 0.85 }}>PHILLIPS</div>
+      </div>
       <div style={{
         flex: 1, minWidth: 0, fontSize: 15, fontWeight: 500,
         letterSpacing: "-0.01em", overflow: "hidden",

@@ -83,7 +83,7 @@ function RendersSection({ onOpen }) {
 
 function RenderOverlay({ r, large }) {
   return (
-    <>
+    <div className="render-overlay">
       <div style={{
         position: "absolute", top: 10, left: 10,
         padding: "4px 7px", background: "#c9470a", color: "#f5f2ec",
@@ -106,7 +106,7 @@ function RenderOverlay({ r, large }) {
           }}>{r.caption}</div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -173,7 +173,7 @@ const arrowBtn = {
 
 function RendersView({ onClose }) {
   return (
-    <div style={{
+    <div className="renders-page" style={{
       flex: 1, overflowY: "auto", background: "#f5f2ec", padding: "32px 40px 40px",
       fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
     }}>
