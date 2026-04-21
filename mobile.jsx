@@ -185,8 +185,16 @@ function MobileTopBar({ onMenu, view, selectedPhase, editMode }) {
         width: 28, height: 28, background: "#c9470a",
         display: "flex", alignItems: "center", justifyContent: "center",
         fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 600,
+        flexShrink: 0,
       }}>35</div>
-      <div style={{ flex: 1 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-0.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          35 PHILLIPS RD — Project Hub
+        </div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, color: "#8a8579", letterSpacing: "0.1em" }}>
+          {PROJECT.city.toUpperCase()}
+        </div>
+      </div>
       {editMode && (
         <div style={{
           padding: "4px 8px", background: "#c9470a", color: "#f5f2ec",
