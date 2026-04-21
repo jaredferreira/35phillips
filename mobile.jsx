@@ -187,7 +187,7 @@ function MobileTopBar({ onMenu, view, selectedPhase, editMode }) {
         fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1,
       }}>
         <div style={{ fontSize: 15, fontWeight: 700 }}>35</div>
-        <div style={{ fontSize: 7, letterSpacing: "0.12em", marginTop: 1, opacity: 0.85 }}>PHILLIPS</div>
+        <div style={{ fontSize: 6, letterSpacing: "0.12em", marginTop: 1, opacity: 0.85 }}>PHILLIPS</div>
       </div>
       <div style={{
         flex: 1, minWidth: 0, fontSize: 15, fontWeight: 500,
