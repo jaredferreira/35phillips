@@ -62,7 +62,7 @@ function PlansView() {
         <h1 className="overview-title" style={{ margin: 0, fontSize: 40, fontWeight: 500, letterSpacing: "-0.02em" }}>
           Plans
         </h1>
-        <div style={{
+        <div className="page-subtitle" style={{
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#8a8579",
           textAlign: "right",
         }}>
