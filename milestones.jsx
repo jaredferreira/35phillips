@@ -62,13 +62,14 @@ function MilestoneRow({
             }}>⋮⋮</div>
         )}
         <button
-          onClick={onToggleDone}
+          onClick={editMode ? onToggleDone : undefined}
+          disabled={!editMode}
           style={{
             width: 18, height: 18, padding: 0,
             border: `1.5px solid ${m.done ? "#2d4a3e" : "#b8b2a3"}`,
             background: m.done ? "#2d4a3e" : "transparent",
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer",
+            cursor: editMode ? "pointer" : "default",
           }}>
           {m.done && (
             <svg width="11" height="11" viewBox="0 0 11 11">
@@ -102,7 +103,7 @@ function MilestoneRow({
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
           color: "#8a8579", letterSpacing: "0.08em", textAlign: "right",
         }}>
-          {m.done ? "DONE" : (i === nextIdx && status === "in-progress") ? "NEXT" : "—"}
+          {m.done ? "DONE" : "—"}
         </div>
         <button
           onClick={onToggleExpand}
