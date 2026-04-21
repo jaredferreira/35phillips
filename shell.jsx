@@ -92,7 +92,9 @@ function ScheduleView({ phases, progress, onSelect }) {
         margin: "6px 0 24px", fontSize: 32, fontWeight: 500, letterSpacing: "-0.02em",
       }}>Gantt — all phases</h1>
 
-      <div style={{ background: "#fff", border: "1px solid rgba(26,26,26,0.12)", padding: 24 }}>
+      <div style={{ background: "#fff", border: "1px solid rgba(26,26,26,0.12)" }}>
+      <div className="gantt-scroll" style={{ padding: 24, overflowX: "auto" }}>
+      <div style={{ minWidth: 560 }}>
         {/* axis */}
         <div className="schedule-axis" style={{
           display: "grid", gridTemplateColumns: "180px 1fr 70px",
@@ -189,7 +191,7 @@ function ScheduleView({ phases, progress, onSelect }) {
             TODAY
           </span>
         </div>
-      </div>
+      </div></div></div>
     </div>
   );
 }
