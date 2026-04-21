@@ -66,8 +66,7 @@ function PlansView() {
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#8a8579",
           textAlign: "right",
         }}>
-          <div>HASKELL + CO. ARCHITECTS</div>
-          <div>PERMIT SET · PLACEHOLDERS UNTIL UPLOAD</div>
+          <div>CHARLES SCHAFFER & ASSOCIATES LLC</div>
         </div>
       </div>
 
