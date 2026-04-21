@@ -186,8 +186,7 @@ function RendersView({ onClose }) {
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#8a8579",
           textAlign: "right",
         }}>
-          <div>ARCHITECTURAL VISUALIZATION</div>
-          <div>HASKELL + CO. · REV 3 · FEB 2026</div>
+          <div>ARCHITECTURAL 3D VISUALIZATION by JARED FERREIRA · APRIL 2026</div>
         </div>
       </div>
       <div className="renders-full-grid" style={{
