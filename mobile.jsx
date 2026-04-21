@@ -21,9 +21,9 @@ function MobileDrawer({
   phases, selectedId, onSelectPhase, progress,
 }) {
   if (!open) return null;
+  const [phasesOpen, setPhasesOpen] = useState(view === "phase");
   const views = [
     { id: "overview", label: "Overview" },
-    { id: "phase",    label: "Phase detail" },
     { id: "schedule", label: "Schedule" },
     { id: "renders",  label: "Renders" },
     { id: "plans",    label: "Plans" },
@@ -64,13 +64,9 @@ function MobileDrawer({
           }}>×</button>
         </div>
 
-        {/* Views */}
+        {/* Nav */}
         <div style={{ padding: "14px 10px 6px" }}>
-          <div style={{
-            padding: "0 12px 8px",
-            fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
-            color: "#8a8579", letterSpacing: "0.14em",
-          }}>VIEWS</div>
+          {/* Flat views */}
           {views.map(v => (
             <button key={v.id} onClick={() => { onViewChange(v.id); onClose(); }}
               style={{
@@ -82,50 +78,66 @@ function MobileDrawer({
                 fontFamily: "inherit", fontSize: 15, fontWeight: view === v.id ? 500 : 400,
               }}>{v.label}</button>
           ))}
-        </div>
 
-        {/* Phases */}
-        <div style={{ padding: "14px 10px 6px", borderTop: "1px solid #2a2a2a", marginTop: 6 }}>
-          <div style={{
-            padding: "0 12px 4px", display: "flex", justifyContent: "space-between",
-            fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
-            color: "#8a8579", letterSpacing: "0.14em",
-          }}>
-            <span>PHASES</span>
-            <span>{(() => { const all = phases.flatMap(p => p.milestones || []); const done = all.filter(m => m.done).length; return all.length > 0 ? Math.round(done / all.length * 100) : 0; })()}%</span>
-          </div>
-          {phases.map((p, i) => {
-            const status = statusFromMilestones(p);
-            const selected = p.id === selectedId && view === "phase";
-            return (
-              <button key={p.id}
-                onClick={() => { onSelectPhase(p.id); onClose(); }}
-                style={{
-                  display: "grid", gridTemplateColumns: "16px 1fr auto",
-                  gap: 12, width: "100%", textAlign: "left",
-                  padding: "12px 14px",
-                  background: selected ? "#2a2a2a" : "transparent",
-                  borderLeft: selected ? "3px solid #c9470a" : "3px solid transparent",
-                  border: "none", cursor: "pointer", color: "#f5f2ec",
-                  fontFamily: "inherit", alignItems: "center",
-                }}>
-                <span style={{ display: "flex", justifyContent: "center" }}>
-                  <StatusDot status={status} />
-                </span>
-                <span>
-                  <span style={{
-                    fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
-                    color: "#8a8579", letterSpacing: "0.08em",
-                  }}>PHASE {p.num}</span>
-                  <div style={{ fontSize: 14, marginTop: 2 }}>{p.name}</div>
-                </span>
-                <span style={{
-                  fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
-                  color: "#8a8579",
-                }}>{p.duration}d</span>
-              </button>
-            );
-          })}
+          {/* Phases — collapsible */}
+          <button
+            onClick={() => setPhasesOpen(o => !o)}
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              width: "100%", textAlign: "left",
+              padding: "14px 14px",
+              background: view === "phase" ? "#2a2a2a" : "transparent",
+              color: view === "phase" ? "#f5f2ec" : "#d4d0c5",
+              borderLeft: view === "phase" ? "3px solid #c9470a" : "3px solid transparent",
+              border: "none", cursor: "pointer",
+              fontFamily: "inherit", fontSize: 15, fontWeight: view === "phase" ? 500 : 400,
+            }}>
+            <span>Phases</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" style={{
+              transform: phasesOpen ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 150ms", flexShrink: 0,
+            }}>
+              <polyline points="2,4 6,8 10,4" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+            </svg>
+          </button>
+
+          {/* Phase sub-list */}
+          {phasesOpen && (
+            <div style={{ borderLeft: "3px solid #2a2a2a", marginLeft: 14 }}>
+              {phases.map((p) => {
+                const status = statusFromMilestones(p);
+                const selected = p.id === selectedId && view === "phase";
+                return (
+                  <button key={p.id}
+                    onClick={() => { onSelectPhase(p.id); onClose(); }}
+                    style={{
+                      display: "grid", gridTemplateColumns: "16px 1fr auto",
+                      gap: 10, width: "100%", textAlign: "left",
+                      padding: "11px 14px",
+                      background: selected ? "#2a2a2a" : "transparent",
+                      borderLeft: selected ? "3px solid #c9470a" : "3px solid transparent",
+                      border: "none", cursor: "pointer", color: "#f5f2ec",
+                      fontFamily: "inherit", alignItems: "center",
+                    }}>
+                    <span style={{ display: "flex", justifyContent: "center" }}>
+                      <StatusDot status={status} />
+                    </span>
+                    <span>
+                      <span style={{
+                        fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
+                        color: "#8a8579", letterSpacing: "0.08em",
+                      }}>PHASE {p.num}</span>
+                      <div style={{ fontSize: 13, marginTop: 1 }}>{p.name}</div>
+                    </span>
+                    <span style={{
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
+                      color: "#8a8579",
+                    }}>{p.duration}d</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* GC */}
