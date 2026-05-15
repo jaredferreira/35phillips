@@ -119,35 +119,43 @@ function PDFViewer({ url }) {
       </div>
 
       {/* ── Canvas area ── */}
+      {/* Outer: measures available width for fit-scale; never scrolls */}
       <div ref={containerRef} style={{
-        flex: 1, overflowY: "auto", overflowX: "auto",
-        background: "#d9d3c3", padding: 16,
-        display: "flex", flexDirection: "column", alignItems: "center",
+        flex: 1, overflow: "hidden", background: "#d9d3c3", minHeight: 0,
       }}>
-        {loading && (
-          <div style={{
-            margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: 11, color: "#8a8579", letterSpacing: "0.12em", padding: 60,
-          }}>LOADING PDF…</div>
-        )}
-        {loadError && (
-          <div style={{
-            margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: 11, color: "#c9470a", padding: 40, textAlign: "center",
-          }}>
-            <div>COULD NOT LOAD PDF</div>
-            <div style={{ marginTop: 8, color: "#8a8579" }}>{loadError}</div>
-            <a href={url} target="_blank" style={{ color: "#c9470a", marginTop: 16, display: "block" }}>
-              OPEN IN NEW TAB →
-            </a>
-          </div>
-        )}
-        <canvas ref={canvasRef} style={{
-          display: loading || loadError ? "none" : "block",
-          boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
-          opacity: rendering ? 0.65 : 1,
-          transition: "opacity 120ms",
-        }} />
+        {/* Inner: scrolls in both axes when canvas is larger than the frame */}
+        <div style={{
+          width: "100%", height: "100%",
+          overflowY: "auto", overflowX: "auto",
+          display: "flex", flexDirection: "column", alignItems: "center",
+          padding: 16, boxSizing: "border-box",
+        }}>
+          {loading && (
+            <div style={{
+              margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 11, color: "#8a8579", letterSpacing: "0.12em", padding: 60,
+            }}>LOADING PDF…</div>
+          )}
+          {loadError && (
+            <div style={{
+              margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 11, color: "#c9470a", padding: 40, textAlign: "center",
+            }}>
+              <div>COULD NOT LOAD PDF</div>
+              <div style={{ marginTop: 8, color: "#8a8579" }}>{loadError}</div>
+              <a href={url} target="_blank" style={{ color: "#c9470a", marginTop: 16, display: "block" }}>
+                OPEN IN NEW TAB →
+              </a>
+            </div>
+          )}
+          <canvas ref={canvasRef} style={{
+            display: loading || loadError ? "none" : "block",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
+            opacity: rendering ? 0.65 : 1,
+            transition: "opacity 120ms",
+            flexShrink: 0,
+          }} />
+        </div>
       </div>
 
     </div>
