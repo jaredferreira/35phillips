@@ -15,26 +15,6 @@ window.PROJECT = {
 // Phase definitions in order
 window.PHASES = [
   {
-    id: "gasrun",
-    num: "01",
-    name: "Gas Run",
-    short: "Gas Run",
-    trade: "Plumbing / Gas",
-    duration: 3,
-    contractor: "TBD",
-    lead: "TBD",
-    phone: "TBD",
-    areas: ["Gas service from street", "Meter location", "Trenching"],
-    milestones: [
-      { label: "Utility locate (Dig Safe)", done: false },
-      { label: "Trench from main to house", done: false },
-      { label: "Gas line run", done: false },
-      { label: "Meter install (utility)", done: false },
-      { label: "Pressure test", done: false },
-    ],
-    notes: "Unblocks the entire project — meter must be set before any rough-in work. 2-week utility lead time on meter install.",
-  },
-  {
     id: "eval",
     num: "02",
     name: "Site Evaluation",
