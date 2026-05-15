@@ -16,7 +16,7 @@ window.PROJECT = {
 window.PHASES = [
   {
     id: "eval",
-    num: "02",
+    num: "01",
     name: "Site Evaluation",
     short: "Eval",
     trade: "General / Architect",
@@ -35,7 +35,7 @@ window.PHASES = [
   },
   {
     id: "bids",
-    num: "03",
+    num: "02",
     name: "Bids & Proposals",
     short: "Bids",
     trade: "Owner / GC",
@@ -55,7 +55,7 @@ window.PHASES = [
   },
   {
     id: "permits",
-    num: "04",
+    num: "03",
     name: "Permits",
     short: "Permits",
     trade: "Owner / GC",
@@ -76,7 +76,7 @@ window.PHASES = [
   },
   {
     id: "order",
-    num: "05",
+    num: "04",
     name: "Order Material",
     short: "Order",
     trade: "Procurement",
@@ -95,7 +95,7 @@ window.PHASES = [
   },
   {
     id: "demo",
-    num: "06",
+    num: "05",
     name: "Demolition",
     short: "Demo",
     trade: "Demo",
@@ -115,7 +115,7 @@ window.PHASES = [
   },
   {
     id: "framing",
-    num: "07",
+    num: "06",
     name: "Framing",
     short: "Framing",
     trade: "Carpentry",
@@ -135,7 +135,7 @@ window.PHASES = [
   },
   {
     id: "masonry",
-    num: "08",
+    num: "07",
     name: "Masonry",
     short: "Masonry",
     trade: "Masonry",
@@ -153,7 +153,7 @@ window.PHASES = [
   },
   {
     id: "roofing",
-    num: "09",
+    num: "08",
     name: "Roofing / Siding / Gutters",
     short: "Roof+",
     trade: "Roofing / Exterior",
@@ -174,7 +174,7 @@ window.PHASES = [
   },
   {
     id: "trim",
-    num: "10",
+    num: "09",
     name: "Fascia / Soffit / Trim",
     short: "Trim",
     trade: "Exterior Carpentry",
@@ -194,7 +194,7 @@ window.PHASES = [
   },
   {
     id: "windows",
-    num: "11",
+    num: "10",
     name: "Windows & Doors",
     short: "W+D",
     trade: "Carpentry",
@@ -213,7 +213,7 @@ window.PHASES = [
   },
   {
     id: "hvac",
-    num: "12",
+    num: "11",
     name: "AC / Heat",
     short: "HVAC",
     trade: "TBD",
@@ -232,7 +232,7 @@ window.PHASES = [
   },
   {
     id: "gas",
-    num: "13",
+    num: "12",
     name: "Gas / Heat",
     short: "Gas",
     trade: "Plumbing / Gas",
@@ -252,7 +252,7 @@ window.PHASES = [
   },
   {
     id: "electric",
-    num: "14",
+    num: "13",
     name: "Electrical",
     short: "Elec",
     trade: "Electrical",
@@ -272,7 +272,7 @@ window.PHASES = [
   },
   {
     id: "insulation",
-    num: "15",
+    num: "14",
     name: "Spray Foam Insulation",
     short: "Insul.",
     trade: "Insulation",
@@ -291,7 +291,7 @@ window.PHASES = [
   },
   {
     id: "finish",
-    num: "16",
+    num: "15",
     name: "Finish Work",
     short: "Finish",
     trade: "Multiple",
