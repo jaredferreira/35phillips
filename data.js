@@ -231,28 +231,8 @@ window.PHASES = [
     notes: "Coordinated with electrical — shared chases in kitchen soffit.",
   },
   {
-    id: "gas",
-    num: "12",
-    name: "Gas / Heat",
-    short: "Gas",
-    trade: "Plumbing / Gas",
-    duration: 3,
-    contractor: "Dalton Mechanical",
-    lead: "K. Dalton",
-    phone: "978-555-0620",
-    areas: ["Gas service", "Boiler", "Water heater"],
-    milestones: [
-      { label: "Gas line from street", done: false },
-      { label: "Meter install (utility)", done: false },
-      { label: "Boiler + indirect water heater", done: false },
-      { label: "Plumbing rough", done: false },
-      { label: "Rough inspection", done: false },
-    ],
-    notes: "Oil → gas conversion. Utility meter install requires 2-week lead.",
-  },
-  {
     id: "electric",
-    num: "13",
+    num: "12",
     name: "Electrical",
     short: "Elec",
     trade: "Electrical",
@@ -272,7 +252,7 @@ window.PHASES = [
   },
   {
     id: "insulation",
-    num: "14",
+    num: "13",
     name: "Spray Foam Insulation",
     short: "Insul.",
     trade: "Insulation",
@@ -291,7 +271,7 @@ window.PHASES = [
   },
   {
     id: "finish",
-    num: "15",
+    num: "14",
     name: "Finish Work",
     short: "Finish",
     trade: "Multiple",
@@ -323,8 +303,7 @@ window.PERSONAS = [
   { id: "roof",     label: "TBD (Roofing)",        phase: "roofing",    color: "#6b7280" },
   { id: "insul",    label: "AllJersey Spray Foam LLC", phase: "insulation", color: "#6b7280" },
   { id: "hvac",     label: "TBD (HVAC)",           phase: "hvac",      color: "#6b7280" },
-  { id: "gas",      label: "Dalton Mechanical (Gas)",  phase: "gas",       color: "#6b7280" },
-  { id: "elec",     label: "Voltage Bros.",        phase: "electric",   color: "#6b7280" },
+{ id: "elec",     label: "Voltage Bros.",        phase: "electric",   color: "#6b7280" },
   { id: "finish",   label: "Harbor Interiors",     phase: "finish",     color: "#6b7280" },
 ];
 
