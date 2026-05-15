@@ -1,120 +1,201 @@
-// Plans gallery — architect-approved plan drawings (placeholder until real files uploaded)
+// Plans — embedded PDF viewer using PDF.js
 
-const PLANS = [
-  { title: "Site plan",        caption: "Lot layout, setbacks, zoning",         tag: "A-100" },
-  { title: "Foundation plan",  caption: "Footings, slab, load-bearing walls",   tag: "A-101" },
-  { title: "First floor plan", caption: "Living, kitchen, entry, garage",       tag: "A-102" },
-  { title: "Second floor plan",caption: "Bedrooms, baths, primary suite",       tag: "A-103" },
-];
+function PDFViewer({ url }) {
+  const [pdfDoc, setPdfDoc]         = React.useState(null);
+  const [pageNum, setPageNum]       = React.useState(1);
+  const [numPages, setNumPages]     = React.useState(0);
+  const [scale, setScale]           = React.useState(1.0);
+  const [loading, setLoading]       = React.useState(true);
+  const [rendering, setRendering]   = React.useState(false);
+  const [loadError, setLoadError]   = React.useState(null);
+  const canvasRef     = React.useRef(null);
+  const containerRef  = React.useRef(null);
+  const renderTaskRef = React.useRef(null);
 
-// Inline SVG placeholder for each plan — blueprint aesthetic
-function PlanPlaceholder({ tag }) {
-  return (
-    <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"
-      style={{ width: "100%", height: "100%", display: "block", background: "#0f2a3a" }}>
-      <defs>
-        <pattern id={`grid-${tag}`} width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M20 0 L 0 0 0 20" fill="none" stroke="rgba(245,242,236,0.08)" strokeWidth="0.5"/>
-        </pattern>
-      </defs>
-      <rect width="400" height="300" fill={`url(#grid-${tag})`} />
-      {/* outer wall */}
-      <rect x="60" y="60" width="280" height="180"
-        fill="none" stroke="#f5f2ec" strokeWidth="2"/>
-      {/* interior walls */}
-      <line x1="180" y1="60"  x2="180" y2="150" stroke="#f5f2ec" strokeWidth="1.5"/>
-      <line x1="180" y1="150" x2="340" y2="150" stroke="#f5f2ec" strokeWidth="1.5"/>
-      <line x1="240" y1="150" x2="240" y2="240" stroke="#f5f2ec" strokeWidth="1.5"/>
-      {/* door swings */}
-      <path d="M60,200 A 20 20 0 0 1 80 220" fill="none" stroke="#f5f2ec" strokeWidth="1"/>
-      <path d="M180,105 A 15 15 0 0 1 195 120" fill="none" stroke="#f5f2ec" strokeWidth="1"/>
-      {/* dimension ticks */}
-      <line x1="60" y1="50" x2="340" y2="50" stroke="#c9470a" strokeWidth="1"/>
-      <line x1="60" y1="45" x2="60" y2="55" stroke="#c9470a" strokeWidth="1"/>
-      <line x1="340" y1="45" x2="340" y2="55" stroke="#c9470a" strokeWidth="1"/>
-      <text x="200" y="44" fill="#c9470a" fontSize="10"
-        fontFamily="'IBM Plex Mono', monospace" textAnchor="middle" letterSpacing="1">
-        PLACEHOLDER
-      </text>
-      {/* sheet tag */}
-      <g transform="translate(340, 260)">
-        <rect x="-50" y="-18" width="50" height="22" fill="#c9470a"/>
-        <text x="-25" y="-3" fill="#f5f2ec" fontSize="11" fontWeight="600"
-          fontFamily="'IBM Plex Mono', monospace" textAnchor="middle">
-          {tag}
-        </text>
-      </g>
-    </svg>
+  // Load the PDF document
+  React.useEffect(() => {
+    const lib = window.pdfjsLib;
+    if (!lib) { setLoadError("PDF.js not loaded"); setLoading(false); return; }
+    lib.GlobalWorkerOptions.workerSrc =
+      "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+
+    setLoading(true);
+    setLoadError(null);
+    lib.getDocument(url).promise
+      .then(doc => { setPdfDoc(doc); setNumPages(doc.numPages); setLoading(false); })
+      .catch(err => { setLoadError(err.message); setLoading(false); });
+  }, [url]);
+
+  // Render current page whenever pdf/page/scale changes
+  React.useEffect(() => {
+    if (!pdfDoc || !canvasRef.current) return;
+    if (renderTaskRef.current) { renderTaskRef.current.cancel(); }
+    setRendering(true);
+
+    pdfDoc.getPage(pageNum).then(page => {
+      const container = containerRef.current;
+      const availW = container ? container.clientWidth - 32 : 800;
+      const baseVp = page.getViewport({ scale: 1 });
+      const fitScale = Math.min(availW / baseVp.width, 2.5);
+      const viewport = page.getViewport({ scale: fitScale * scale });
+
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      canvas.width  = viewport.width;
+      canvas.height = viewport.height;
+
+      const task = page.render({ canvasContext: canvas.getContext("2d"), viewport });
+      renderTaskRef.current = task;
+      task.promise
+        .then(() => setRendering(false))
+        .catch(err => { if (err.name !== "RenderingCancelledException") setRendering(false); });
+    });
+  }, [pdfDoc, pageNum, scale]);
+
+  const prevPage = () => setPageNum(p => Math.max(1, p - 1));
+  const nextPage = () => setPageNum(p => Math.min(numPages, p + 1));
+  const zoomOut  = () => setScale(s => Math.max(0.5, parseFloat((s - 0.25).toFixed(2))));
+  const zoomIn   = () => setScale(s => Math.min(3.0, parseFloat((s + 0.25).toFixed(2))));
+  const zoomFit  = () => setScale(1.0);
+
+  const btn = (onClick, label, disabled, accent) => (
+    <button onClick={onClick} disabled={disabled} style={{
+      background: "transparent",
+      border: `1px solid ${accent ? "#c9470a" : "#3a3a3a"}`,
+      color: accent ? "#c9470a" : disabled ? "#555" : "#f5f2ec",
+      fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
+      letterSpacing: "0.08em", padding: "6px 12px",
+      cursor: disabled ? "default" : "pointer", whiteSpace: "nowrap",
+    }}>{label}</button>
   );
-}
 
-function PlansView() {
   return (
-    <div className="overview-root" style={{
-      flex: 1, overflowY: "auto", background: "#f5f2ec", padding: "32px 40px 40px",
-      fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
-    }}>
-      <Label>Architectural drawings</Label>
-      <div className="overview-hero" style={{
-        display: "flex", justifyContent: "space-between", alignItems: "flex-end",
-        marginTop: 6, marginBottom: 10, gap: 16, flexWrap: "wrap",
-      }}>
-        <h1 className="overview-title" style={{ margin: 0, fontSize: 40, fontWeight: 500, letterSpacing: "-0.02em" }}>
-          Plans
-        </h1>
-        <div className="page-subtitle" style={{
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#8a8579",
-          textAlign: "right",
-        }}>
-          <div>CHARLES SCHAFFER & ASSOCIATES LLC</div>
-        </div>
-      </div>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
 
+      {/* ── Toolbar ── */}
       <div style={{
-        padding: "10px 14px", marginBottom: 24,
-        border: "1px dashed rgba(26,26,26,0.25)", background: "rgba(201,71,10,0.06)",
-        fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#7a3a12",
-        letterSpacing: "0.04em",
+        background: "#1a1a1a", padding: "10px 16px", flexShrink: 0,
+        display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
+        borderBottom: "2px solid #000",
       }}>
-        PLACEHOLDER PLANS — REPLACE WITH ARCHITECT-APPROVED PDFS / IMAGES WHEN AVAILABLE.
+        {/* Page navigation */}
+        {btn(prevPage, "← PREV", pageNum <= 1)}
+        <span style={{
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
+          color: "#d4d0c5", minWidth: 72, textAlign: "center",
+        }}>
+          {loading ? "—" : `${pageNum} / ${numPages}`}
+        </span>
+        {btn(nextPage, "NEXT →", pageNum >= numPages)}
+
+        <div style={{ width: 1, height: 20, background: "#3a3a3a", margin: "0 2px", flexShrink: 0 }} />
+
+        {/* Zoom */}
+        {btn(zoomOut, "−", scale <= 0.5)}
+        <span style={{
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
+          color: "#d4d0c5", minWidth: 44, textAlign: "center",
+        }}>{Math.round(scale * 100)}%</span>
+        {btn(zoomIn, "+", scale >= 3.0)}
+        {btn(zoomFit, "FIT", false, true)}
+
+        <div style={{ flex: 1 }} />
+
+        {/* Download */}
+        <a href={url} download="35-phillips-plans.pdf" style={{
+          background: "transparent", border: "1px solid #3a3a3a", color: "#f5f2ec",
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
+          letterSpacing: "0.08em", padding: "6px 12px",
+          textDecoration: "none", whiteSpace: "nowrap",
+        }}>↓ DOWNLOAD</a>
       </div>
 
-      <div className="renders-full-grid" style={{
-        display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 16,
+      {/* ── Canvas area ── */}
+      <div ref={containerRef} style={{
+        flex: 1, overflowY: "auto", overflowX: "auto",
+        background: "#d9d3c3", padding: 16,
+        display: "flex", flexDirection: "column", alignItems: "center",
       }}>
-        {PLANS.map((pl) => (
-          <div key={pl.tag} style={{
-            border: "1px solid rgba(26,26,26,0.15)",
-            background: "#0f2a3a", position: "relative",
-            overflow: "hidden", aspectRatio: "4 / 3",
+        {loading && (
+          <div style={{
+            margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 11, color: "#8a8579", letterSpacing: "0.12em", padding: 60,
+          }}>LOADING PDF…</div>
+        )}
+        {loadError && (
+          <div style={{
+            margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 11, color: "#c9470a", padding: 40, textAlign: "center",
           }}>
-            <PlanPlaceholder tag={pl.tag}/>
-            {/* overlay */}
-            <div style={{
-              position: "absolute", top: 10, left: 10,
-              padding: "4px 7px", background: "#c9470a", color: "#f5f2ec",
-              fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
-              letterSpacing: "0.12em",
-            }}>{pl.tag}</div>
-            <div style={{
-              position: "absolute", left: 0, right: 0, bottom: 0,
-              padding: "16px 18px",
-              background: "linear-gradient(to top, rgba(15,42,58,0.95), rgba(15,42,58,0))",
-              color: "#f5f2ec", textAlign: "left",
-            }}>
-              <div style={{ fontSize: 18, fontWeight: 500, letterSpacing: "-0.01em" }}>
-                {pl.title}
-              </div>
-              <div style={{
-                fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
-                color: "#d4d0c5", marginTop: 4, letterSpacing: "0.04em",
-              }}>{pl.caption}</div>
-            </div>
+            <div>COULD NOT LOAD PDF</div>
+            <div style={{ marginTop: 8, color: "#8a8579" }}>{loadError}</div>
+            <a href={url} target="_blank" style={{ color: "#c9470a", marginTop: 16, display: "block" }}>
+              OPEN IN NEW TAB →
+            </a>
           </div>
-        ))}
+        )}
+        <canvas ref={canvasRef} style={{
+          display: loading || loadError ? "none" : "block",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
+          opacity: rendering ? 0.65 : 1,
+          transition: "opacity 120ms",
+          maxWidth: "100%",
+        }} />
+      </div>
+
+      {/* ── Mobile fallback strip ── */}
+      <div style={{
+        background: "#1a1a1a", padding: "8px 16px", flexShrink: 0,
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        borderTop: "1px solid #2a2a2a",
+      }}>
+        <span style={{
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
+          color: "#8a8579", letterSpacing: "0.1em",
+        }}>CHARLES SCHAFFER & ASSOCIATES LLC</span>
+        <a href={url} target="_blank" style={{
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
+          color: "#c9470a", letterSpacing: "0.1em", textDecoration: "none",
+        }}>OPEN FULL SCREEN ↗</a>
       </div>
     </div>
   );
 }
 
-Object.assign(window, { PLANS, PlansView });
+function PlansView() {
+  return (
+    <div style={{
+      flex: 1, display: "flex", flexDirection: "column", minHeight: 0,
+      fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
+    }}>
+      {/* Header */}
+      <div style={{
+        padding: "20px 24px 16px", background: "#f5f2ec",
+        borderBottom: "1px solid rgba(26,26,26,0.12)", flexShrink: 0,
+        display: "flex", justifyContent: "space-between", alignItems: "flex-end",
+        flexWrap: "wrap", gap: 8,
+      }}>
+        <div>
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
+            letterSpacing: "0.14em", color: "#8a8579",
+          }}>ARCHITECTURAL DRAWINGS</div>
+          <h1 style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 500, letterSpacing: "-0.02em" }}>
+            Plans
+          </h1>
+        </div>
+        <div className="page-subtitle" style={{
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
+          color: "#8a8579", textAlign: "right",
+        }}>
+          <div>CHARLES SCHAFFER & ASSOCIATES LLC</div>
+        </div>
+      </div>
+
+      {/* PDF Viewer — fills remaining height */}
+      <PDFViewer url="plans.pdf" />
+    </div>
+  );
+}
+
+Object.assign(window, { PlansView });
