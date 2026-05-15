@@ -127,18 +127,18 @@ function PDFViewer({ url }) {
         <div style={{
           width: "100%", height: "100%",
           overflowY: "auto", overflowX: "auto",
-          display: "flex", flexDirection: "column", alignItems: "center",
           padding: 16, boxSizing: "border-box",
         }}>
           {loading && (
             <div style={{
-              margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 11, color: "#8a8579", letterSpacing: "0.12em", padding: 60,
+              textAlign: "center",
             }}>LOADING PDF…</div>
           )}
           {loadError && (
             <div style={{
-              margin: "auto", fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 11, color: "#c9470a", padding: 40, textAlign: "center",
             }}>
               <div>COULD NOT LOAD PDF</div>
@@ -150,10 +150,10 @@ function PDFViewer({ url }) {
           )}
           <canvas ref={canvasRef} style={{
             display: loading || loadError ? "none" : "block",
+            margin: "0 auto",
             boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
             opacity: rendering ? 0.65 : 1,
             transition: "opacity 120ms",
-            flexShrink: 0,
           }} />
         </div>
       </div>
@@ -167,6 +167,7 @@ function PlansView() {
     <div style={{
       flex: 1, display: "flex", flexDirection: "column", minHeight: 0,
       fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
+      overflow: "hidden", width: "100%", minWidth: 0,
     }}>
       {/* Header */}
       <div style={{
