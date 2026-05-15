@@ -61,8 +61,8 @@ function PDFViewer({ url }) {
   const btn = (onClick, label, disabled, accent) => (
     <button onClick={onClick} disabled={disabled} style={{
       background: "transparent",
-      border: `1px solid ${accent ? "#c9470a" : "#3a3a3a"}`,
-      color: accent ? "#c9470a" : disabled ? "#555" : "#f5f2ec",
+      border: `1px solid ${accent ? "#c9470a" : "rgba(26,26,26,0.25)"}`,
+      color: accent ? "#c9470a" : disabled ? "#b8b2a3" : "#3a3a3a",
       fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
       letterSpacing: "0.08em", padding: "6px 12px",
       cursor: disabled ? "default" : "pointer", whiteSpace: "nowrap",
@@ -74,27 +74,27 @@ function PDFViewer({ url }) {
 
       {/* ── Toolbar ── */}
       <div style={{
-        background: "#1a1a1a", padding: "10px 16px", flexShrink: 0,
+        background: "#f0ece3", padding: "10px 16px", flexShrink: 0,
         display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
-        borderBottom: "2px solid #000", overflow: "hidden", minWidth: 0,
+        borderBottom: "1px solid rgba(26,26,26,0.15)", overflow: "hidden", minWidth: 0,
       }}>
         {/* Page navigation */}
         {btn(prevPage, "← PREV", pageNum <= 1)}
         <span style={{
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
-          color: "#d4d0c5", minWidth: 72, textAlign: "center",
+          color: "#6b6560", minWidth: 72, textAlign: "center",
         }}>
           {loading ? "—" : `${pageNum} / ${numPages}`}
         </span>
         {btn(nextPage, "NEXT →", pageNum >= numPages)}
 
-        <div style={{ width: 1, height: 20, background: "#3a3a3a", margin: "0 2px", flexShrink: 0 }} />
+        <div style={{ width: 1, height: 20, background: "rgba(26,26,26,0.15)", margin: "0 2px", flexShrink: 0 }} />
 
         {/* Zoom */}
         {btn(zoomOut, "−", scale <= 0.5)}
         <span style={{
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
-          color: "#d4d0c5", minWidth: 44, textAlign: "center",
+          color: "#6b6560", minWidth: 44, textAlign: "center",
         }}>{Math.round(scale * 100)}%</span>
         {btn(zoomIn, "+", scale >= 3.0)}
         {btn(zoomFit, "FIT", false, true)}
@@ -103,7 +103,7 @@ function PDFViewer({ url }) {
 
         {/* Open full screen */}
         <a href={url} target="_blank" style={{
-          background: "transparent", border: "1px solid #3a3a3a", color: "#f5f2ec",
+          background: "transparent", border: "1px solid rgba(26,26,26,0.25)", color: "#3a3a3a",
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
           letterSpacing: "0.08em", padding: "6px 12px",
           textDecoration: "none", whiteSpace: "nowrap",
@@ -111,7 +111,7 @@ function PDFViewer({ url }) {
 
         {/* Download */}
         <a href={url} download="35-phillips-plans.pdf" style={{
-          background: "transparent", border: "1px solid #3a3a3a", color: "#f5f2ec",
+          background: "transparent", border: "1px solid rgba(26,26,26,0.25)", color: "#3a3a3a",
           fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
           letterSpacing: "0.08em", padding: "6px 12px",
           textDecoration: "none", whiteSpace: "nowrap",
@@ -169,31 +169,6 @@ function PlansView() {
       fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
       overflow: "hidden", width: "100%", minWidth: 0,
     }}>
-      {/* Header */}
-      <div style={{
-        padding: "20px 24px 16px", background: "#f5f2ec",
-        borderBottom: "1px solid rgba(26,26,26,0.12)", flexShrink: 0,
-        display: "flex", justifyContent: "space-between", alignItems: "flex-end",
-        flexWrap: "wrap", gap: 8,
-      }}>
-        <div>
-          <div style={{
-            fontFamily: "'IBM Plex Mono', monospace", fontSize: 10,
-            letterSpacing: "0.14em", color: "#8a8579",
-          }}>ARCHITECTURAL DRAWINGS</div>
-          <h1 style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 500, letterSpacing: "-0.02em" }}>
-            Plans
-          </h1>
-        </div>
-        <div className="page-subtitle" style={{
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
-          color: "#8a8579", textAlign: "right",
-        }}>
-          <div>CHARLES SCHAFFER & ASSOCIATES LLC</div>
-        </div>
-      </div>
-
-      {/* PDF Viewer — fills remaining height */}
       <PDFViewer url="plans.pdf" />
     </div>
   );
