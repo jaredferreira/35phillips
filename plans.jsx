@@ -101,6 +101,14 @@ function PDFViewer({ url }) {
 
         <div style={{ flex: 1 }} />
 
+        {/* Open full screen */}
+        <a href={url} target="_blank" style={{
+          background: "transparent", border: "1px solid #3a3a3a", color: "#f5f2ec",
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 11,
+          letterSpacing: "0.08em", padding: "6px 12px",
+          textDecoration: "none", whiteSpace: "nowrap",
+        }}>↗ FULL SCREEN</a>
+
         {/* Download */}
         <a href={url} download="35-phillips-plans.pdf" style={{
           background: "transparent", border: "1px solid #3a3a3a", color: "#f5f2ec",
@@ -143,21 +151,6 @@ function PDFViewer({ url }) {
         }} />
       </div>
 
-      {/* ── Mobile fallback strip ── */}
-      <div style={{
-        background: "#1a1a1a", padding: "8px 16px", flexShrink: 0,
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        borderTop: "1px solid #2a2a2a",
-      }}>
-        <span style={{
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
-          color: "#8a8579", letterSpacing: "0.1em",
-        }}>CHARLES SCHAFFER & ASSOCIATES LLC</span>
-        <a href={url} target="_blank" style={{
-          fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
-          color: "#c9470a", letterSpacing: "0.1em", textDecoration: "none",
-        }}>OPEN FULL SCREEN ↗</a>
-      </div>
     </div>
   );
 }
