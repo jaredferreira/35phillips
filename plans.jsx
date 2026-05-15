@@ -70,13 +70,13 @@ function PDFViewer({ url }) {
   );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0, width: "100%", overflow: "hidden" }}>
 
       {/* ── Toolbar ── */}
       <div style={{
         background: "#1a1a1a", padding: "10px 16px", flexShrink: 0,
         display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
-        borderBottom: "2px solid #000",
+        borderBottom: "2px solid #000", overflow: "hidden", minWidth: 0,
       }}>
         {/* Page navigation */}
         {btn(prevPage, "← PREV", pageNum <= 1)}
