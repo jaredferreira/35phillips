@@ -147,7 +147,6 @@ function PDFViewer({ url }) {
           boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
           opacity: rendering ? 0.65 : 1,
           transition: "opacity 120ms",
-          maxWidth: "100%",
         }} />
       </div>
 
