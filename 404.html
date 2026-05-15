@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>35 Phillips Rd</title>
+<script>
+  // Convert a direct path like /plans or /phase/framing into a hash-routed URL
+  // e.g. 35phillips.com/plans → 35phillips.com/#plans
+  var path = window.location.pathname.replace(/^\//, "").replace(/\/$/, "");
+  var dest = window.location.origin + "/" + (path ? "#" + path : "");
+  window.location.replace(dest);
+</script>
+</head>
+<body></body>
+</html>

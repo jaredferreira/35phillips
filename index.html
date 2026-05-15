@@ -115,21 +115,62 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#c9470a"
 }/*EDITMODE-END*/;
 
+const VALID_VIEWS = ["overview", "phase", "schedule", "renders", "plans"];
+
+// Parse the current URL hash into { view, selectedId }
+function parseHash() {
+  const hash = window.location.hash.replace(/^#/, "");
+  const [view, selectedId] = hash.split("/");
+  return {
+    view: VALID_VIEWS.includes(view) ? view : null,
+    selectedId: selectedId || null,
+  };
+}
+
 function App() {
   const [progress, setProgress] = useState(TWEAK_DEFAULTS.progress);
-  const [view, setView] = useState(TWEAK_DEFAULTS.view);
   const [accent, setAccent] = useState(TWEAK_DEFAULTS.accent);
   const [persona, setPersona] = useState(
     PERSONAS.find(p => p.id === TWEAK_DEFAULTS.personaId) || PERSONAS[0]
   );
-  const [selectedId, setSelectedId] = useState(() => {
-    // Pick current in-progress phase
-    for (let i = 0; i < PHASES.length; i++) {
-      const s = statusFromProgress(i, PHASES.length, TWEAK_DEFAULTS.progress);
-      if (s === "in-progress") return PHASES[i].id;
-    }
+
+  // Initialise view + selectedId from hash, fall back to localStorage
+  const [view, setViewRaw] = useState(() => {
+    const { view: hv } = parseHash();
+    if (hv) return hv;
+    try {
+      const saved = JSON.parse(localStorage.getItem("35phillips") || "{}");
+      if (VALID_VIEWS.includes(saved.view)) return saved.view;
+    } catch {}
+    return TWEAK_DEFAULTS.view;
+  });
+  const [selectedId, setSelectedIdRaw] = useState(() => {
+    const { view: hv, selectedId: hs } = parseHash();
+    if (hv === "phase" && hs && PHASES.find(p => p.id === hs)) return hs;
+    try {
+      const saved = JSON.parse(localStorage.getItem("35phillips") || "{}");
+      if (saved.selectedId && PHASES.find(p => p.id === saved.selectedId)) return saved.selectedId;
+    } catch {}
+    // Default: first phase
     return PHASES[0].id;
   });
+
+  // Wrap setters so every navigation also pushes a hash
+  const navigate = (newView, newSelectedId) => {
+    const sid = newSelectedId !== undefined ? newSelectedId : selectedId;
+    const hash = newView === "phase" ? `#phase/${sid}` : `#${newView}`;
+    window.history.pushState(null, "", hash);
+    setViewRaw(newView);
+    if (newSelectedId !== undefined) setSelectedIdRaw(newSelectedId);
+  };
+  const setView = (v) => navigate(v, undefined);
+  const setSelectedId = (id) => {
+    const hash = `#phase/${id}`;
+    window.history.pushState(null, "", hash);
+    setSelectedIdRaw(id);
+    setViewRaw("phase");
+  };
+
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -150,30 +191,28 @@ function App() {
     setEditMode(false);
   };
 
-  // Restore last position
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("35phillips") || "{}");
-      if (saved.view) setView(saved.view);
-      if (saved.selectedId) setSelectedId(saved.selectedId);
-      if (typeof saved.progress === "number") setProgress(saved.progress);
-      if (saved.personaId) {
-        const p = PERSONAS.find(x => x.id === saved.personaId);
-        if (p) setPersona(p);
-      }
-    } catch {}
-  }, []);
+  // Persist to localStorage (non-navigation state)
   useEffect(() => {
     localStorage.setItem("35phillips", JSON.stringify({
       view, selectedId, progress, personaId: persona.id,
     }));
   }, [view, selectedId, progress, persona]);
 
+  // Browser back / forward
+  useEffect(() => {
+    const handler = () => {
+      const { view: hv, selectedId: hs } = parseHash();
+      if (hv) setViewRaw(hv);
+      if (hs && PHASES.find(p => p.id === hs)) setSelectedIdRaw(hs);
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
+
   // When persona changes to a contractor, jump to their phase
   useEffect(() => {
     if (persona.phase) {
-      setSelectedId(persona.phase);
-      setView("phase");
+      navigate("phase", persona.phase);
     }
   }, [persona.id]);
 
@@ -255,7 +294,7 @@ function App() {
           <OverviewView
             phases={PHASES_MERGED}
             progress={progress}
-            onSelect={(id) => { setSelectedId(id); setView("phase"); }}
+            onSelect={(id) => navigate("phase", id)}
             persona={persona}
             activity={ACTIVITY}
             onOpenRender={(i) => setLightboxIdx(i)}
@@ -265,7 +304,7 @@ function App() {
           <ScheduleView
             phases={PHASES_MERGED}
             progress={progress}
-            onSelect={(id) => { setSelectedId(id); setView("phase"); }}
+            onSelect={(id) => navigate("phase", id)}
           />
         )}
         {view === "renders" && (
@@ -307,7 +346,7 @@ function App() {
         onExitEdit={exitEdit}
         phases={PHASES_MERGED}
         selectedId={selectedId}
-        onSelectPhase={(id) => { setSelectedId(id); setView("phase"); }}
+        onSelectPhase={(id) => navigate("phase", id)}
         progress={progress}
       />
     </div>
